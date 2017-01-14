@@ -34,6 +34,13 @@ const state = {
       ],
     },
   },
+  Contact: {
+    list: {
+      result: [
+        { id: 1, name: 'The one' },
+      ],
+    },
+  },
 };
 
 describe('denormalizeWithState', () => {
@@ -43,6 +50,7 @@ describe('denormalizeWithState', () => {
         posts: state.Post.view.result,
         comments: state.Comment.list.result,
         author: state.Author.list.result,
+        contact: state.Contact.list.result,
       });
 
       expect(postSingle).to.deep.equal({
@@ -55,6 +63,11 @@ describe('denormalizeWithState', () => {
             author: {
               id: 1,
               text: "author A's message",
+              contact: {
+                id: 1,
+                email: 'hello@abc.com',
+                name: 'The one',
+              },
             },
             isLoading: false,
           },
@@ -106,6 +119,10 @@ describe('denormalizeWithState', () => {
                 author: {
                   id: 1,
                   text: "author A's message",
+                  contact: {
+                    id: 1,
+                    email: 'hello@abc.com',
+                  },
                 },
                 isLoading: false,
               },
@@ -171,6 +188,10 @@ describe('denormalizeWithState', () => {
                 author: {
                   id: 1,
                   text: "author A's message",
+                  contact: {
+                    id: 1,
+                    email: 'hello@abc.com',
+                  },
                 },
                 isLoading: false,
               },
@@ -237,6 +258,10 @@ describe('denormalizeWithState', () => {
                 author: {
                   id: 1,
                   text: "author A's message",
+                  contact: {
+                    id: 1,
+                    email: 'hello@abc.com',
+                  },
                 },
                 isLoading: false,
               },
@@ -302,6 +327,10 @@ describe('denormalizeWithState', () => {
               author: {
                 id: 1,
                 text: "author A's message",
+                contact: {
+                  id: 1,
+                  email: 'hello@abc.com',
+                },
               },
               isLoading: false,
             },
@@ -344,6 +373,10 @@ describe('denormalizeWithState', () => {
               author: {
                 id: 1,
                 text: "author A's message",
+                contact: {
+                  id: 1,
+                  email: 'hello@abc.com',
+                },
               },
             },
             {

@@ -10,7 +10,7 @@ function mergeMappings(a, mapping, key) {
   return Object.assign({}, mapping[key], a);
 }
 
-function iterateThroughObject(object, keys, mappings) {
+function iterateOverObject(object, keys, mappings) {
   for (const key in object) {
     if (keys.includes(key)) {
       if (Array.isArray(object[key])) {
@@ -19,8 +19,11 @@ function iterateThroughObject(object, keys, mappings) {
         object[key] = mergeMappings(object[key], mappings, key);
       }
     }
+
     if (Array.isArray(object[key])) {
       object[key] = mergeState(object[key], mappings);
+    } else if (typeof object[key] === 'object') {
+      object[key] = iterateOverObject(object[key], keys, mappings);
     }
   }
   return object;
@@ -32,9 +35,9 @@ function mergeState(object, mappings) {
   }
   const keys = Object.keys(mappings);
   if (Array.isArray(object)) {
-    return object.map(item => iterateThroughObject(item, keys, mappings));
+    return object.map(item => iterateOverObject(item, keys, mappings));
   } else {
-    return iterateThroughObject(object, keys, mappings);
+    return iterateOverObject(object, keys, mappings);
   }
 }
 
