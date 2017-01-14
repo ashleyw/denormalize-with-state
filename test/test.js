@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import { denormalize } from 'denormalizr';
 import { postSchema, postListSchema, normalizedData } from './data';
-import { denormalizeWithState } from '../lib/index';
+import { denormalizeWithState } from '../src/index';
 
 const state = {
   Post: {
     list: {
       result: {
-        1: { id: 1, isLoading: false, tag: 'cool' },
-        2: { id: 2, isLoading: true, tag: 'super' },
+        1: { isLoading: false, tag: 'cool' },
+        2: { isLoading: true, tag: 'super' },
       },
     },
     view: {
@@ -21,23 +21,23 @@ const state = {
   Comment: {
     list: {
       result: {
-        1: { id: 1, isLoading: false },
-        2: { id: 2, isLoading: true },
+        1: { isLoading: false },
+        2: { isLoading: true },
       },
     },
   },
   Author: {
     list: {
       result: {
-        3: { id: 3, name: 'cool author C' },
-        4: { id: 4, name: 'cool author D' },
+        3: { name: 'cool author C' },
+        4: { name: 'cool author D' },
       },
     },
   },
   Contact: {
     list: {
       result: {
-        1: { id: 1, name: 'The one' },
+        1: { name: 'The one' },
       },
     },
   },
@@ -95,9 +95,7 @@ describe('denormalizeWithState', () => {
 
       expect(postSingle.title).to.not.equal(state.Post.view.result.title);
     });
-  });
 
-  describe('entity = 1', () => {
     it('should allow function to be passed as mapping', () => {
       const postSingle = denormalizeWithState(1, normalizedData.entities, postSchema, {
         posts: state.Post.view.result,
@@ -135,17 +133,6 @@ describe('denormalizeWithState', () => {
         ],
         tag: 'super cool',
       });
-    });
-
-    it('should not override entity data', () => {
-      state.Post.view.result.title = 'NOT THIS TITLE';
-      const postSingle = denormalizeWithState(1, normalizedData.entities, postSchema, {
-        posts: state.Post.view.result,
-        comments: state.Comment.list.result,
-        author: state.Author.list.result,
-      });
-
-      expect(postSingle.title).to.not.equal(state.Post.view.result.title);
     });
   });
 
@@ -220,7 +207,7 @@ describe('denormalizeWithState', () => {
     });
   });
 
-  describe('entity = { 1: { id: 1, isLoading: false } }', () => {
+  describe('entity = { 1: { isLoading: false } }', () => {
     it('should merge in data', () => {
       const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema, {
         posts: state.Post.list.result,
@@ -291,7 +278,7 @@ describe('denormalizeWithState', () => {
     });
   });
 
-  describe('entity = { 1: { id: 1, isLoading: false } }, without listing root in mappings', () => {
+  describe('entity = { 1: { isLoading: false } }, without listing root in mappings', () => {
     it('should merge in data', () => {
       const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema, {
         comments: state.Comment.list.result,
@@ -361,9 +348,49 @@ describe('denormalizeWithState', () => {
     });
   });
 
+  describe('entity = { id: 1, isLoading: false }', () => {
+    it('should allow function to be passed as mapping', () => {
+      const postSingle = denormalizeWithState(state.Post.view.result, normalizedData.entities, postSchema, {
+        posts: state.Post.view.result,
+        comments: state.Comment.list.result,
+      });
+
+      expect(postSingle).to.deep.equal({
+        id: 1,
+        tag: 'super cool',
+        title: 'post A',
+        comments: [
+          {
+            id: 1,
+            text: 'comment A',
+            isLoading: false,
+            author: {
+              id: 1,
+              text: "author A's message",
+              contact: {
+                id: 1,
+                email: 'hello@abc.com',
+              },
+            },
+          },
+          {
+            id: 2,
+            text: 'comment B',
+            isLoading: true,
+            author: {
+              id: 2,
+              text: "author B's message",
+            },
+          },
+        ],
+      });
+    });
+  });
+
+
   describe('entity = { id: 1, isLoading: false }, without listing root in mappings', () => {
     it('should merge in data', () => {
-      const postList = denormalizeWithState(state.Post.list.result[1], normalizedData.entities, postSchema, {
+      const postList = denormalizeWithState(state.Post.view.result, normalizedData.entities, postSchema, {
         comments: state.Comment.list.result,
         author: state.Author.list.result,
       });
@@ -396,8 +423,7 @@ describe('denormalizeWithState', () => {
               isLoading: true,
             },
           ],
-          isLoading: false,
-          tag: 'cool',
+          tag: 'super cool',
         },
       );
     });
@@ -406,7 +432,7 @@ describe('denormalizeWithState', () => {
   describe('entity = [1, 2], with no state map', () => {
     it('should merge in data', () => {
       const postListA = denormalizeWithState([1, 2], normalizedData.entities, postListSchema);
-      const postListB = denormalize(Object.entries(state.Post.list.result).map(([id, p]) => p.id), normalizedData.entities, postListSchema);
+      const postListB = denormalize([1, 2], normalizedData.entities, postListSchema);
       expect(postListA).to.deep.equal(postListB);
     });
   });

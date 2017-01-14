@@ -4,7 +4,10 @@ function mergeMappings(a, mapping, key) {
   if (mapping === undefined) {
     return a;
   }
-  if (typeof mapping[key] === 'object' && !Object.keys(mapping[key]).includes('id')) {
+  if (typeof mapping[key] === 'object') {
+    if (Object.keys(mapping[key]).includes('id')) {
+      return Object.assign({}, mapping[key], a);
+    }
     return Object.assign({}, mapping[key][a.id], a);
   } else if (typeof mapping[key] === 'function') {
     return mapping[key](a);
@@ -55,16 +58,16 @@ export const denormalizeWithState = (entity, entities, schema, mappings) => {
     if (mappings && schema._itemSchema._key in mappings) {
       state = state.map(item => mergeMappings(item, mappings, schema._itemSchema._key));
     } else {
-      state = state.map(item => mergeMappings(item, [entity.find(i => i.id === item.id)], 0));
+      state = state.map(item => mergeMappings(item, [entity.find(i => i === item.id)], 0));
     }
 
-  // entity ~ { 1: { id: 1, isLoading: false } }
-  } else if (typeof entity === 'object' && !Object.keys(entity).includes('id')) {
+  // entity ~ { 1: { isLoading: false } }
+  } else if (typeof entity === 'object') {
     state = mergeState(denormalize(Object.entries(entity).map(([id]) => id), entities, schema), mappings);
-    if (mappings && schema._itemSchema._key in mappings) {
-      state = state.map(item => mergeMappings(item, mappings, schema._itemSchema._key));
+    if (mappings && schema._key in mappings) {
+      state = state.map(item => mergeMappings(item, mappings, schema._key));
     } else {
-      state = state.map(item => mergeMappings(item, entity, item.id));
+      state = state.map(item => Object.assign({}, entity[item.id], item));
     }
 
   // entity ~ 1
