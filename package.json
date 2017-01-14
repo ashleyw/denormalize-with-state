@@ -1,0 +1,41 @@
+{
+  "name": "denormalize-with-state",
+  "version": "0.1.0",
+  "description": "denormalize-with-state takes data denormalized by denormalizr and merges in extra state.",
+  "keywords": [
+    "normalizr",
+    "normalize",
+    "denormalizr",
+    "denormalize"
+  ],
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashleyw/denormalize-with-state.git"
+  },
+  "homepage": "https://github.com/ashleyw/denormalize-with-state#readme",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-core/register",
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build",
+    "lint": "eslint src test"
+  },
+  "author": "Ashley Williams",
+  "license": "MIT",
+  "dependencies": {
+    "denormalizr": "^0.4.1",
+    "normalizr": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.13.1",
+    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.2.0"
+  }
+}
