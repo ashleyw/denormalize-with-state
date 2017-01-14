@@ -16,7 +16,7 @@ function iterateOverObject(object, keys, mappings) {
   for (const key in object) {
     if (keys.includes(key)) {
       if (Array.isArray(object[key])) {
-        object[key] = object[key].map(itemA => mergeMappings(itemA, mappings, key));
+        object[key] = object[key].map(item => mergeMappings(item, mappings, key));
       } else {
         object[key] = mergeMappings(object[key], mappings, key);
       }
