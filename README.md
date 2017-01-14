@@ -124,6 +124,7 @@ const posts = denormalizeWithState(state.Post.list.result, state.entities, postL
   contact: contact => ({ ...contact, email: contact.email.toUpperCase() }),
 });
 
+console.log(JSON.stringify(posts, null, 2));
 
 // [
 //   {
