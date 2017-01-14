@@ -125,7 +125,6 @@ const posts = denormalizeWithState(state.Post.list.result, state.entities, postL
 });
 
 console.log(JSON.stringify(posts, null, 2));
-
 // [
 //   {
 //     id: 1,
