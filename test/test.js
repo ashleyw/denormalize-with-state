@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import { denormalize } from 'denormalizr';
 import { postSchema, postListSchema, normalizedData } from './data';
-import { denormalizeWithState } from '../src/index';
+import { denormalizeWithState } from '../lib/index';
 
 const state = {
   Post: {
     list: {
-      result: [
-        { id: 1, isLoading: false, tag: 'cool' },
-        { id: 2, isLoading: true, tag: 'super' },
-      ],
+      result: {
+        1: { id: 1, isLoading: false, tag: 'cool' },
+        2: { id: 2, isLoading: true, tag: 'super' },
+      },
     },
     view: {
       result: {
@@ -20,25 +20,25 @@ const state = {
   },
   Comment: {
     list: {
-      result: [
-        { id: 1, isLoading: false },
-        { id: 2, isLoading: true },
-      ],
+      result: {
+        1: { id: 1, isLoading: false },
+        2: { id: 2, isLoading: true },
+      },
     },
   },
   Author: {
     list: {
-      result: [
-        { id: 3, name: 'cool author C' },
-        { id: 4, name: 'cool author D' },
-      ],
+      result: {
+        3: { id: 3, name: 'cool author C' },
+        4: { id: 4, name: 'cool author D' },
+      },
     },
   },
   Contact: {
     list: {
-      result: [
-        { id: 1, name: 'The one' },
-      ],
+      result: {
+        1: { id: 1, name: 'The one' },
+      },
     },
   },
 };
@@ -220,7 +220,7 @@ describe('denormalizeWithState', () => {
     });
   });
 
-  describe('entity = [{ id: 1, isLoading: false }]', () => {
+  describe('entity = { 1: { id: 1, isLoading: false } }', () => {
     it('should merge in data', () => {
       const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema, {
         posts: state.Post.list.result,
@@ -291,7 +291,7 @@ describe('denormalizeWithState', () => {
     });
   });
 
-  describe('entity = [{ id: 1, isLoading: false }], without listing root in mappings', () => {
+  describe('entity = { 1: { id: 1, isLoading: false } }, without listing root in mappings', () => {
     it('should merge in data', () => {
       const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema, {
         comments: state.Comment.list.result,
@@ -363,7 +363,7 @@ describe('denormalizeWithState', () => {
 
   describe('entity = { id: 1, isLoading: false }, without listing root in mappings', () => {
     it('should merge in data', () => {
-      const postList = denormalizeWithState(state.Post.list.result[0], normalizedData.entities, postSchema, {
+      const postList = denormalizeWithState(state.Post.list.result[1], normalizedData.entities, postSchema, {
         comments: state.Comment.list.result,
         author: state.Author.list.result,
       });
@@ -406,12 +406,12 @@ describe('denormalizeWithState', () => {
   describe('entity = [1, 2], with no state map', () => {
     it('should merge in data', () => {
       const postListA = denormalizeWithState([1, 2], normalizedData.entities, postListSchema);
-      const postListB = denormalize(state.Post.list.result.map(t => t.id), normalizedData.entities, postListSchema);
+      const postListB = denormalize(Object.entries(state.Post.list.result).map(([id, p]) => p.id), normalizedData.entities, postListSchema);
       expect(postListA).to.deep.equal(postListB);
     });
   });
 
-  describe('entity = [{ id: 1, isLoading: false }], with no state map', () => {
+  describe('entity = { 1: { id: 1, isLoading: false } }, with no state map', () => {
     it('should merge in data', () => {
       const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema);
       expect(postList).to.deep.equal([
