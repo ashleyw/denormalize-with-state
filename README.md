@@ -16,6 +16,11 @@ export const postSchema = new Schema('posts');
 export const postListSchema = arrayOf(postSchema);
 export const commentSchema = new Schema('comments');
 export const authorSchema = new Schema('author');
+export const contactSchema = new Schema('contact');
+
+authorSchema.define({
+  contact: contactSchema,
+});
 
 commentSchema.define({
   author: authorSchema,
@@ -37,6 +42,10 @@ const normalized = normalize([
         author: {
           id: 1,
           text: "author A's message",
+          contact: {
+            id: 1,
+            email: 'hello@abc.com',
+          },
         },
       },
       {
@@ -112,6 +121,7 @@ const state = {
 const posts = denormalizeWithState(state.Post.list.result, state.entities, postListSchema, {
   comments: state.Comment.list.result,
   author: state.Author.list.result,
+  contact: contact => ({ ...contact, email: contact.email.toUpperCase() }),
 });
 
 
@@ -126,6 +136,10 @@ const posts = denormalizeWithState(state.Post.list.result, state.entities, postL
 //         author: {
 //           id: 1,
 //           text: "author A's message",
+//           contact: {
+//             id: 1,
+//             email: 'HELLO@ABC.COM',
+//           },
 //         },
 //         isLoading: false,
 //       },

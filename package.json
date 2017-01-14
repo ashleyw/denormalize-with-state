@@ -1,6 +1,6 @@
 {
   "name": "denormalize-with-state",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "denormalize-with-state takes data denormalized by denormalizr and merges in extra state.",
   "keywords": [
     "normalizr",
@@ -32,6 +32,7 @@
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-2": "^6.18.0",
     "chai": "^3.5.0",
     "eslint": "^3.13.1",
     "eslint-config-airbnb-base": "^11.0.1",

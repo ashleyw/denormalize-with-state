@@ -5,12 +5,15 @@ export const postListSchema = arrayOf(postSchema);
 export const commentSchema = new Schema('comments');
 export const authorSchema = new Schema('author');
 export const contactSchema = new Schema('contact');
+
 authorSchema.define({
   contact: contactSchema,
 });
+
 commentSchema.define({
   author: authorSchema,
 });
+
 postSchema.define({
   comments: arrayOf(commentSchema),
 });

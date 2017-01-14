@@ -6,6 +6,8 @@ function mergeMappings(a, mapping, key) {
   }
   if (Array.isArray(mapping[key])) {
     return Object.assign({}, mapping[key].find(b => a.id == b.id), a);
+  } else if (typeof mapping[key] === 'function') {
+    return mapping[key](a);
   }
   return Object.assign({}, mapping[key], a);
 }
