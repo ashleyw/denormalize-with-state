@@ -1,4 +1,4 @@
-# denormalize-with-state
+# denormalize-with-state [![Build Status](https://travis-ci.org/ashleyw/denormalize-with-state.svg?branch=master)](https://travis-ci.org/ashleyw/denormalize-with-state)
 
 **denormalize-with-state** takes data denormalized by [denormalizr](https://github.com/gpbl/denormalizr) and merges in extra state.
 
