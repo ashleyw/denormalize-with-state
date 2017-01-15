@@ -82,7 +82,7 @@ describe('entity = { id: 1, isLoading: false }', () => {
 
   it('should allow function to be passed as mapping for root', () => {
     const postSingle = denormalizeWithState(state.Post.view.result, normalizedData.entities, postSchema, {
-      posts: post => ({ ...post, ...state.Post.view.result, title: post.title.toUpperCase() }),
+      posts: post => ({ ...post, title: post.title.toUpperCase() }),
     });
 
     expect(postSingle).to.deep.equal({

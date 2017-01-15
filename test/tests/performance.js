@@ -18,6 +18,6 @@ describe('@performance', () => {
     }
     const avg = times.reduce((total, time) => total + time) / times.length;
 
-    expect(avg).to.be.below(0.4);
+    expect(avg).to.be.below(0.3);
   });
 });
