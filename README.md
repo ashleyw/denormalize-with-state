@@ -3,8 +3,8 @@
 **denormalize-with-state** takes data denormalized by [denormalizr](https://github.com/gpbl/denormalizr) and merges in extra state.
 
 ## Use cases
-- Merging in local state *(i.e. `isLoading` flags)*
-- Optimistic updates of attributes *(an attribute in mapping state will override entities' attributes)*
+- Merging in local state *(e.g. `isLoading` flags)*
+- Optimistic updates of attributes *(an attribute in the mapping state will override entity attributes)*
 
 ## Install
 
