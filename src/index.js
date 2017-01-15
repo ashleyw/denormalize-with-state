@@ -66,8 +66,8 @@ export default (entity, entities, schema, mappings) => {
     }
 
     return state.map((item) => {
-      const _state = mergeMappings(item, entity.find(i => i === item.id));
-      return mappings ? mergeMappings(_state, mappings[schema._itemSchema._key]) : _state;
+      item = mergeMappings(item, entity.find(i => i === item.id));
+      return mappings ? mergeMappings(item, mappings[schema._itemSchema._key]) : item;
     });
 
   // entity ~ { 1: { isLoading: false } }
