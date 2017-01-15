@@ -45,15 +45,18 @@ describe('entity = 1', () => {
     });
   });
 
-  it('should not override entity data', () => {
-    state.Post.view.result.title = 'NOT THIS TITLE';
+  it('should override entity data', () => {
+    const newState = JSON.parse(JSON.stringify(state));
+    newState.Post.view.result.title = 'THIS TITLE';
+
+    const before = normalizedData.entities;
     const postSingle = denormalizeWithState(1, normalizedData.entities, postSchema, {
-      posts: state.Post.view.result,
-      comments: state.Comment.list.result,
-      author: state.Author.list.result,
+      posts: newState.Post.view.result,
+      comments: newState.Comment.list.result,
+      author: newState.Author.list.result,
     });
 
-    expect(postSingle.title).to.not.equal(state.Post.view.result.title);
+    expect(postSingle.title).to.equal(newState.Post.view.result.title);
   });
 
   it('should allow function to be passed as mapping', () => {

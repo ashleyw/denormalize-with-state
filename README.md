@@ -2,11 +2,17 @@
 
 **denormalize-with-state** takes data denormalized by [denormalizr](https://github.com/gpbl/denormalizr) and merges in extra state.
 
-While denormalizr is great at reassembling entities, sometimes you want to merge in local state (i.e. `isLoading` flags)
+## Use cases
+- Merging in local state *(i.e. `isLoading` flags)*
+- Optimistic updates of attributes *(an attribute in mapping state will override entities' attributes)*
+
+## Install
 
 ```
 npm install denormalize-with-state --save
 ```
+
+## Example
 
 ```js
 import { normalize, Schema, arrayOf } from 'normalizr';
@@ -183,6 +189,8 @@ denormalize (entity, entities, schema, mappings) -> Object|Array
 
 > The entity to denormalize, its id, or an array of entities or ids.
 
+> Lists should be an object with the keys being the IDs and values being the local state.
+
 **entities** `{Object}`
 
 > An object to entities used to denormalize entity and its referred entities.
@@ -194,6 +202,8 @@ denormalize (entity, entities, schema, mappings) -> Object|Array
 **mappings** `{Object}`
 
 > An object to map entity relationships to state.
+
+> The object's keys should map to normalizr schemas, and the values should either be an object with the keys being the IDs and values being the local state, or an object with an `id` attribute.
 
 ### Returns
 

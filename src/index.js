@@ -13,7 +13,7 @@ function mergeMappings(entity, mapObj) {
   }
 
   if (Object.keys(mapObj).includes('id')) {
-    return Object.assign({}, mapObj, entity);
+    return Object.assign({}, entity, mapObj);
   }
 
   return Object.assign({}, mapObj[entity.id], entity);
