@@ -1,5 +1,8 @@
-import { normalize, Schema, arrayOf } from 'normalizr';
-import { denormalizeWithState } from './src/index';
+/* eslint no-console: 0 */
+
+import { Schema, arrayOf } from 'normalizr';
+import denormalizeWithState from './src/index';
+
 export const postSchema = new Schema('posts');
 export const postListSchema = arrayOf(postSchema);
 export const commentSchema = new Schema('comments');
@@ -90,12 +93,8 @@ const state = {
   },
 };
 
-
 const posts = denormalizeWithState(state.Post.list.result, entities, postListSchema, {
   posts: state.Post.list.result,
-  comments: state.Comment.list.result,
-  author: state.Author.list.result,
-  contact: contact => ({ ...contact, email: contact.email.toUpperCase() }),
 });
 
 console.log(JSON.stringify(posts, null, 2));

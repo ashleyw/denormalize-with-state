@@ -1,83 +1,88 @@
+/* eslint no-underscore-dangle: 0 */
+/* eslint no-param-reassign: 0 */
+/* eslint no-use-before-define: 0 */
+
 import { denormalize } from 'denormalizr';
 
-function mergeMappings(a, mapping, key) {
-  if (mapping === undefined) {
-    return a;
+
+function mergeMappings(entity, mapObj) {
+  if (!mapObj) return entity;
+
+  if (typeof mapObj === 'function') {
+    return mapObj(entity);
   }
-  if (typeof mapping[key] === 'object') {
-    if (Object.keys(mapping[key]).includes('id')) {
-      return Object.assign({}, mapping[key], a);
-    }
-    return Object.assign({}, mapping[key][a.id], a);
-  } else if (typeof mapping[key] === 'function') {
-    return mapping[key](a);
+
+  if (Object.keys(mapObj).includes('id')) {
+    return Object.assign({}, mapObj, entity);
   }
-  return Object.assign({}, mapping[key], a);
+
+  return Object.assign({}, mapObj[entity.id], entity);
 }
 
-function iterateOverObject(object, keys, mappings) {
+
+function iterateOverObject(object, mappings) {
+  if (mappings === {}) return object;
+  const mappingsKeys = Object.keys(mappings || {});
+
   Object.keys(object).forEach((key) => {
-    if (keys.includes(key)) {
-      if (Array.isArray(object[key])) {
-        object[key] = object[key].map(item => mergeMappings(item, mappings, key));
+    const isArray = Array.isArray(object[key]);
+
+    if (mappingsKeys.includes(key)) {
+      if (isArray) {
+        object[key] = object[key].map(item => mergeMappings(item, mappings[key]));
       } else {
-        object[key] = mergeMappings(object[key], mappings, key);
+        object[key] = mergeMappings(object[key], mappings[key]);
       }
     }
 
-    if (Array.isArray(object[key])) {
-      object[key] = mergeState(object[key], mappings);
+    if (isArray) {
+      object[key] = iterateOverObject(object[key], mappings);
     } else if (typeof object[key] === 'object') {
-      object[key] = iterateOverObject(object[key], keys, mappings);
+      object[key] = iterateOverObject(object[key], mappings);
     }
   });
+
   return object;
 }
 
-function mergeState(object, mappings) {
-  if (mappings === undefined) return object;
-  const keys = Object.keys(mappings);
-  if (typeof object === 'object' && !Object.keys(object).includes('id')) {
-    return Object.entries(object).map(([_, _entity]) => iterateOverObject(_entity, keys, mappings));
-  }
-  return iterateOverObject(object, keys, mappings);
-}
 
-export const denormalizeWithState = (entity, entities, schema, mappings) => {
-  let state;
+export default (entity, entities, schema, mappings) => {
+  const entityKeys = Object.keys(entity);
 
   // entity ~ { id: 1, isLoading: false }
-  if (typeof entity === 'object' && Object.keys(entity).includes('id')) {
-    state = mergeState(denormalize(entity.id, entities, schema), mappings);
-    state = mergeMappings(state, [entity], 0);
+  if (typeof entity === 'object' && entityKeys.includes('id')) {
+    let state = denormalize(entity.id, entities, schema);
+    state = iterateOverObject(state, mappings);
+    state = mergeMappings(state, entity);
+    return mappings ? mergeMappings(state, mappings[schema._key]) : state;
 
   // entity ~ [1, 2]
   } else if (Array.isArray(entity) && typeof entity[0] === 'number') {
-    state = mergeState(denormalize(entity, entities, schema), mappings);
+    let state = denormalize(entity, entities, schema);
+    state = iterateOverObject(state, mappings);
 
     if (mappings && schema._itemSchema._key in mappings) {
-      state = state.map(item => mergeMappings(item, mappings, schema._itemSchema._key));
-    } else {
-      state = state.map(item => mergeMappings(item, [entity.find(i => i === item.id)], 0));
+      return state.map(item => mergeMappings(item, mappings[schema._itemSchema._key]));
     }
+
+    return state.map((item) => {
+      const _state = mergeMappings(item, entity.find(i => i === item.id));
+      return mappings ? mergeMappings(_state, mappings[schema._itemSchema._key]) : _state;
+    });
 
   // entity ~ { 1: { isLoading: false } }
   } else if (typeof entity === 'object') {
-    state = mergeState(denormalize(Object.entries(entity).map(([id]) => id), entities, schema), mappings);
-    if (mappings && schema._key in mappings) {
-      state = state.map(item => mergeMappings(item, mappings, schema._key));
-    } else {
-      state = state.map(item => Object.assign({}, entity[item.id], item));
-    }
+    let state = denormalize(entityKeys.map(([id]) => id), entities, schema);
+    state = iterateOverObject(state, mappings);
+    return state.map(item => mergeMappings(entity[item.id], item));
 
   // entity ~ 1
   } else if (typeof entity === 'number') {
-    state = mergeState(denormalize(entity, entities, schema), mappings);
-    state = mergeMappings(state, mappings, schema._key);
+    let state = denormalize(entity, entities, schema);
+    state = iterateOverObject(state, mappings);
+    return mergeMappings(state, mappings[schema._key]);
+  }
 
   // fall back to plain old denormalize
-  } else {
-    state = denormalize(entity, entities, schema);
-  }
-  return state;
+  return denormalize(entity, entities, schema);
 };
