@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { denormalize } from 'denormalizr';
 import { postSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
 import state from './_state';
@@ -92,5 +93,11 @@ describe('entity = 1', () => {
       ],
       tag: 'super cool',
     });
+  });
+
+  it('with no state map', () => {
+    const postA = denormalizeWithState(1, normalizedData.entities, postSchema);
+    const postB = denormalize(1, normalizedData.entities, postSchema);
+    expect(postA).to.deep.equal(postB);
   });
 });

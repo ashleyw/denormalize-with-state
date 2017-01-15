@@ -80,7 +80,7 @@ export default (entity, entities, schema, mappings) => {
   } else if (typeof entity === 'number') {
     let state = denormalize(entity, entities, schema);
     state = iterateOverObject(state, mappings);
-    return mergeMappings(state, mappings[schema._key]);
+    return mappings ? mergeMappings(state, mappings[schema._key]) : state;
   }
 
   // fall back to plain old denormalize

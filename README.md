@@ -10,7 +10,7 @@ npm install denormalize-with-state --save
 
 ```js
 import { normalize, Schema, arrayOf } from 'normalizr';
-import { denormalizeWithState } from 'denormalize-with-state';
+import denormalizeWithState from 'denormalize-with-state';
 
 export const postSchema = new Schema('posts');
 export const postListSchema = arrayOf(postSchema);
