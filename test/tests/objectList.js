@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { postListSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
-import state from './_state';
+import state from '../state';
 
 describe('entity = { 1: { isLoading: false } }', () => {
   it('should merge in data', () => {
@@ -197,5 +197,28 @@ describe('entity = { 1: { isLoading: false } }', () => {
         tag: 'super',
       },
     ]);
+  });
+
+  it('allows string IDs', () => {
+    const newState = {
+      Post: {
+        list: {
+          result: {
+            abc: {
+              tag: 'awesome',
+            },
+          },
+        },
+      },
+    };
+    const posts = denormalizeWithState(newState.Post.list.result, normalizedData.entities, postListSchema, {
+      posts: newState.Post.list.result,
+    });
+    expect(posts).to.deep.equal([{
+      id: 'abc',
+      title: 'post C',
+      comments: [],
+      tag: 'awesome',
+    }]);
   });
 });

@@ -68,4 +68,9 @@ export const normalizedData = normalize([
       },
     ],
   },
+  {
+    id: 'abc',
+    title: 'post C',
+    comments: [],
+  },
 ], arrayOf(postSchema));

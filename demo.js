@@ -95,6 +95,9 @@ const state = {
 
 const posts = denormalizeWithState(state.Post.list.result, entities, postListSchema, {
   posts: state.Post.list.result,
+  comments: state.Comment.list.result,
+  author: state.Author.list.result,
+  contact: contact => ({ ...contact, email: contact.email.toUpperCase() }),
 });
 
 console.log(JSON.stringify(posts, null, 2));

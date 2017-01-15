@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { denormalize } from 'denormalizr';
 import { postListSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
-import state from './_state';
+import state from '../state';
 
 describe('entity = [1, 2]', () => {
   it('should merge in data', () => {
@@ -78,5 +78,28 @@ describe('entity = [1, 2]', () => {
     const postListA = denormalizeWithState([1, 2], normalizedData.entities, postListSchema);
     const postListB = denormalize([1, 2], normalizedData.entities, postListSchema);
     expect(postListA).to.deep.equal(postListB);
+  });
+
+  it('allows string IDs', () => {
+    const newState = {
+      Post: {
+        list: {
+          result: {
+            abc: {
+              tag: 'awesome',
+            },
+          },
+        },
+      },
+    };
+    const posts = denormalizeWithState(['abc'], normalizedData.entities, postListSchema, {
+      posts: newState.Post.list.result,
+    });
+    expect(posts).to.deep.equal([{
+      id: 'abc',
+      title: 'post C',
+      comments: [],
+      tag: 'awesome',
+    }]);
   });
 });

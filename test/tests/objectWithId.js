@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { postSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
-import state from './_state';
+import state from '../state';
 
 describe('entity = { id: 1, isLoading: false }', () => {
   it('should allow function to be passed as mapping', () => {
@@ -111,6 +111,26 @@ describe('entity = { id: 1, isLoading: false }', () => {
         },
       ],
       tag: 'super cool',
+    });
+  });
+
+  it('allows string IDs', () => {
+    const newState = {
+      Post: {
+        view: {
+          result: {
+            id: 'abc',
+            tag: 'awesome',
+          },
+        },
+      },
+    };
+    const postSingle = denormalizeWithState(newState.Post.view.result, normalizedData.entities, postSchema);
+    expect(postSingle).to.deep.equal({
+      id: 'abc',
+      title: 'post C',
+      comments: [],
+      tag: 'awesome',
     });
   });
 });

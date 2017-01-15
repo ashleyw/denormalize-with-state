@@ -18,8 +18,8 @@
   "homepage": "https://github.com/ashleyw/denormalize-with-state#readme",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register --grep @performance --invert test/tests",
-    "test:performance": "mocha --compilers js:babel-core/register --grep @performance test/tests",
+    "test": "mocha --compilers js:babel-core/register --grep performance --invert test/tests",
+    "test:performance": "mocha --compilers js:babel-core/register --grep performance test/tests",
     "test:all": "mocha --compilers js:babel-core/register test/tests",
     "build": "babel src --out-dir lib",
     "prepublish": "npm run build",

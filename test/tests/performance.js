@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import now from 'performance-now';
 import { postSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
-import state from './_state';
+import state from '../state';
 
-describe('@performance', () => {
+describe('performance', () => {
   it('should be fast', () => {
     const times = [];
     for (let i = 0; i < 100; i += 1) {

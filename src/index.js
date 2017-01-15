@@ -57,7 +57,7 @@ export default (entity, entities, schema, mappings) => {
     return mappings ? mergeMappings(state, mappings[schema._key]) : state;
 
   // entity ~ [1, 2]
-  } else if (Array.isArray(entity) && typeof entity[0] === 'number') {
+  } else if (Array.isArray(entity) && (typeof entity[0] === 'number' || typeof entity[0] === 'string')) {
     let state = denormalize(entity, entities, schema);
     state = iterateOverObject(state, mappings);
 
@@ -72,12 +72,12 @@ export default (entity, entities, schema, mappings) => {
 
   // entity ~ { 1: { isLoading: false } }
   } else if (typeof entity === 'object') {
-    let state = denormalize(entityKeys.map(([id]) => id), entities, schema);
+    let state = denormalize(entityKeys.map(id => id), entities, schema);
     state = iterateOverObject(state, mappings);
     return state.map(item => mergeMappings(entity[item.id], item));
 
   // entity ~ 1
-  } else if (typeof entity === 'number') {
+  } else if (typeof entity === 'number' || typeof entity === 'string') {
     let state = denormalize(entity, entities, schema);
     state = iterateOverObject(state, mappings);
     return mappings ? mergeMappings(state, mappings[schema._key]) : state;
