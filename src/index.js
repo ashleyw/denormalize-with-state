@@ -35,11 +35,7 @@ function iterateOverObject(object, mappings) {
       }
     }
 
-    if (isArray) {
-      object[key] = iterateOverObject(object[key], mappings);
-    } else if (typeof object[key] === 'object') {
-      object[key] = iterateOverObject(object[key], mappings);
-    }
+    object[key] = iterateOverObject(object[key], mappings);
   });
 
   return object;
