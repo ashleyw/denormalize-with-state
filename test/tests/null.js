@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { denormalize } from 'denormalizr';
 import { postSchema, normalizedData } from '../data';
 import denormalizeWithState from '../../src/index';
 import state from '../state';
