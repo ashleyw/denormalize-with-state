@@ -21,7 +21,7 @@ function mergeMappings(entity, mapObj) {
 
 
 function iterateOverObject(object, mappings) {
-  if (mappings === {}) return object;
+  if (!object || mappings === {}) return object;
   const mappingsKeys = Object.keys(mappings || {});
 
   Object.keys(object).forEach((key) => {
