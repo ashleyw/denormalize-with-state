@@ -45,6 +45,9 @@ function iterateOverObject(object, mappings) {
 
 
 export default (entity, entities, schema, mappings) => {
+  if (entity == null) {
+    return null;
+  }
   const entityKeys = Object.keys(entity);
 
   // entity ~ { id: 1, isLoading: false }
