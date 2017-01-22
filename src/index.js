@@ -7,9 +7,9 @@ import { denormalize } from 'denormalizr';
 import clone from 'clone-deep';
 
 type Entity = Object | Array<Object | Number | String> | number | string;
-type Denormalized = Object | Array;
+type Denormalized = Object | Array<Object> | null;
 
-function mergeMappings(entity, mapObj) {
+function mergeMappings(entity, mapObj) : Object {
   if (!mapObj) {
     return entity;
   }
@@ -30,7 +30,7 @@ function mergeMappings(entity, mapObj) {
 }
 
 
-function iterateOverObject(object, mappings) {
+function iterateOverObject(object, mappings) : Object {
   if (!object || mappings === {}) return object;
   const mappingsKeys = Object.keys(mappings || {});
 

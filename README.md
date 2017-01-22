@@ -180,12 +180,12 @@ console.log(JSON.stringify(posts, null, 2));
 ## API
 
 ```
-denormalize (entity, entities, schema, mappings) -> Object|Array
+denormalize (entity, entities, schema, mappings) -> Object | Array<Object>
 ```
 
 ### Params
 
-**entity** `{Object|Array|Number|String}`
+**entity** `{Object | Array<Object | Number | String> | number | string}`
 
 > The entity to denormalize, its id, or an array of entities or ids.
 
@@ -205,6 +205,6 @@ denormalize (entity, entities, schema, mappings) -> Object|Array
 
 > The object's keys should map to normalizr schemas, and the values should either be an object with the keys being the IDs and values being the local state, or an object with an `id` attribute.
 
-### Returns
+**Returns** `{Object | Array}`
 
-The denormalized object, or an array of denormalized objects.
+> The denormalized object, or an array of denormalized objects.
