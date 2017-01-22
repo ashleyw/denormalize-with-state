@@ -1,20 +1,32 @@
+// @flow
 /* eslint no-underscore-dangle: 0 */
 /* eslint no-param-reassign: 0 */
 /* eslint no-use-before-define: 0 */
 
 import { denormalize } from 'denormalizr';
+import clone from 'clone-deep';
 
+type Entity = Object | Array<Object | Number | String> | number | string;
+type Denormalized = Object | Array;
 
 function mergeMappings(entity, mapObj) {
-  if (!mapObj) return entity;
-
-  if (typeof mapObj === 'function') return mapObj(entity);
-
-  if (Object.keys(mapObj).includes('id')) {
-    return Object.assign({}, entity, mapObj);
+  if (!mapObj) {
+    return entity;
   }
 
-  return Object.assign({}, mapObj[entity.id], entity);
+  if (typeof mapObj === 'function') {
+    return mapObj(clone(entity));
+  }
+
+  if (typeof entity === 'object') {
+    if (!Array.isArray(entity) && Object.keys(mapObj).includes('id')) {
+      return Object.assign({}, entity, mapObj);
+    }
+
+    return Object.assign({}, mapObj[entity.id], entity);
+  }
+
+  return entity;
 }
 
 
@@ -38,49 +50,57 @@ function iterateOverObject(object, mappings) {
     }
 
     return newObject;
-  }, object);
+  }, clone(object));
 }
 
 
-export default (entity, entities, schema, mappings) => {
+export default (entity: Entity, entities: Object, schema: Object, mappings: Object) : Denormalized => {
   if (entity === null) return null;
-  const entityKeys = Object.keys(entity);
 
-  // entity ~ { id: 1, isLoading: false }
-  if (typeof entity === 'object' && entityKeys.includes('id')) {
-    let state = denormalize(entity.id, entities, schema);
-    state = iterateOverObject(state, mappings);
-    state = mergeMappings(state, entity);
-    return mappings ? mergeMappings(state, mappings[schema._key]) : state;
-  }
-
-  // entity ~ [1, 2]
-  if (Array.isArray(entity) && (typeof entity[0] === 'number' || typeof entity[0] === 'string')) {
-    let state = denormalize(entity, entities, schema);
-    state = iterateOverObject(state, mappings);
-
-    if (mappings && schema._itemSchema._key in mappings) {
-      return state.map(item => mergeMappings(item, mappings[schema._itemSchema._key]));
-    }
-
-    return state.map((item) => {
-      item = mergeMappings(item, entity.find(i => i === item.id));
-      return mappings ? mergeMappings(item, mappings[schema._itemSchema._key]) : item;
-    });
-  }
-
-  // entity ~ { 1: { isLoading: false } }
-  if (typeof entity === 'object') {
-    let state = denormalize(entityKeys.map(id => id), entities, schema);
-    state = iterateOverObject(state, mappings);
-    return state.map(item => mergeMappings(entity[item.id], item));
-  }
-
-  // entity ~ 1
+  // entity ~ 1 or "abc"
   if (typeof entity === 'number' || typeof entity === 'string') {
     let state = denormalize(entity, entities, schema);
     state = iterateOverObject(state, mappings);
     return mappings ? mergeMappings(state, mappings[schema._key]) : state;
+  } else if (typeof entity === 'object') {
+    //
+    // entity ~ [1, "abc"]
+    if (Array.isArray(entity)) {
+      if (typeof entity[0] === 'number' || typeof entity[0] === 'string') {
+        let state = denormalize(entity, entities, schema);
+        state = iterateOverObject(state, mappings);
+
+        if (mappings && schema._itemSchema._key in mappings) {
+          return state.map(item => mergeMappings(item, mappings[schema._itemSchema._key]));
+        }
+
+        return state.map((item) => {
+          if (!item || typeof item !== 'object') return null;
+          item = mergeMappings(item, entity.find(i => i === item.id));
+          return mappings ? mergeMappings(item, mappings[schema._itemSchema._key]) : item;
+        });
+      }
+    } else {
+      const entityKeys = Object.keys(entity);
+
+      // entity ~ { id: 1, isLoading: false }
+      if (entityKeys.includes('id')) {
+        let state = denormalize(entity.id, entities, schema);
+        state = iterateOverObject(state, mappings);
+        state = mergeMappings(state, entity);
+        return mappings ? mergeMappings(state, mappings[schema._key]) : state;
+      }
+
+      // entity ~ { 1: { isLoading: false } }
+      let state = denormalize(entityKeys.map(id => id), entities, schema);
+      state = iterateOverObject(state, mappings);
+      return state.map((item) => {
+        if (!item || !item.id) {
+          return null;
+        }
+        return mergeMappings(entity[item.id], item);
+      });
+    }
   }
 
   // fall back to plain old denormalize

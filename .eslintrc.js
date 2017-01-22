@@ -1,8 +1,10 @@
 module.exports = {
+  "parser": "babel-eslint",
   "extends": "airbnb-base",
   "installedESLint": true,
   "plugins": [
-      "import"
+      "import",
+      "flowtype"
   ],
   "rules": {
     "import/no-extraneous-dependencies": 0,
