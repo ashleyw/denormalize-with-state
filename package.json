@@ -28,7 +28,6 @@
   "author": "Ashley Williams",
   "license": "MIT",
   "dependencies": {
-    "clone-deep": "^0.2.4",
     "denormalizr": "^0.4.1"
   },
   "devDependencies": {
