@@ -4,7 +4,6 @@
 /* eslint no-use-before-define: 0 */
 
 import { denormalize } from 'denormalizr';
-import clone from 'clone-deep';
 
 type Entity = Object | Array<Object | Number | String> | number | string;
 type Denormalized = Object | Array<Object> | null;
@@ -15,7 +14,7 @@ function mergeMappings(entity, mapObj) : Object {
   }
 
   if (typeof mapObj === 'function') {
-    return mapObj(clone(entity));
+    return mapObj(entity);
   }
 
   if (typeof entity === 'object') {
@@ -50,7 +49,7 @@ function iterateOverObject(object, mappings) : Object {
     }
 
     return newObject;
-  }, clone(object));
+  }, object);
 }
 
 

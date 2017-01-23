@@ -1,6 +1,6 @@
 {
   "name": "denormalize-with-state",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "denormalize-with-state takes data denormalized by denormalizr and merges in extra state.",
   "keywords": [
     "normalizr",
