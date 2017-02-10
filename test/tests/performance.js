@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import now from 'performance-now';
 import { postSchema, normalizedData } from '../data';
-import denormalizeWithState from '../../src/index';
+import { denormalizeWithState } from '../../src/index';
 import state from '../state';
 
 describe('performance', () => {

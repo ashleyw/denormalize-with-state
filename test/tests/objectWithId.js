@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { postSchema, normalizedData } from '../data';
-import denormalizeWithState from '../../src/index';
+import { denormalizeWithState } from '../../src/index';
 import state from '../state';
 
 describe('entity = { id: 1, isLoading: false }', () => {

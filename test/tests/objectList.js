@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { postListSchema, normalizedData } from '../data';
-import denormalizeWithState from '../../src/index';
+import { denormalizeWithState } from '../../src/index';
 import state from '../state';
 
 describe('entity = { 1: { isLoading: false } }', () => {
@@ -195,6 +195,68 @@ describe('entity = { 1: { isLoading: false } }', () => {
         ],
         isLoading: true,
         tag: 'super',
+      },
+    ]);
+  });
+
+  it('should maintain order', () => {
+    state.Post.list.result = {
+      1: { isLoading: false, tag: 'cool', _order: 2 },
+      2: { isLoading: true, tag: 'super', _order: 1 },
+    };
+    const postList = denormalizeWithState(state.Post.list.result, normalizedData.entities, postListSchema);
+    expect(postList).to.deep.equal([
+      {
+        id: 2,
+        title: 'post B',
+        comments: [
+          {
+            id: 3,
+            text: 'comment C',
+            author: {
+              id: 3,
+              text: "author C's message",
+            },
+          },
+          {
+            id: 4,
+            text: 'comment D',
+            author: {
+              id: 4,
+              text: "author D's message",
+            },
+          },
+        ],
+        isLoading: true,
+        tag: 'super',
+      },
+      {
+        id: 1,
+        title: 'post A',
+        comments: [
+          {
+            id: 1,
+            text: 'comment A',
+            author: {
+              id: 1,
+              text: "author A's message",
+              contact: {
+                id: 1,
+                email: 'hello@abc.com',
+              },
+            },
+          },
+          {
+            id: 2,
+            text: 'comment B',
+            author: {
+              id: 2,
+              text: "author B's message",
+            },
+          },
+        ],
+        isLoading: false,
+        tag: 'cool',
       },
     ]);
   });

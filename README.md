@@ -179,8 +179,11 @@ console.log(JSON.stringify(posts, null, 2));
 
 ## API
 
+
+### denormalizeWithState
+
 ```
-denormalize (entity, entities, schema, mappings) -> Object | Array<Object>
+(entity, entities, schema, mappings) -> Object | Array<Object>
 ```
 
 ### Params
@@ -208,3 +211,64 @@ denormalize (entity, entities, schema, mappings) -> Object | Array<Object>
 **Returns** `{Object | Array}`
 
 > The denormalized object, or an array of denormalized objects.
+
+---
+
+### normalizeIds
+
+```
+(ids, initalState = {}, initalIndex = 0) -> Object
+```
+
+### Params
+
+**ids** `{Array<Integer | String>}`
+
+> The list of ids.
+
+**initalState** `{Object}`
+
+> An optional object to initalize state for each entity.
+
+**initalIndex** `{Schema}`
+
+> The inital index to count from. Useful when appending results.
+
+**Returns** `{Object}`
+
+> The normalized object. For example, with `normalizeIds([2, 1], { isLoading: false })`:
+
+    {
+      1: { isLoading: false, _order: 2 },
+      2: { isLoading: false, _order: 1 }
+    }
+---
+
+### updateEntity
+
+```
+(state, id, newState) -> Object
+```
+
+### Params
+
+**state** `{Object}`
+
+> The state as returned from `normalizeIds`.
+
+**id** `{Integer | String}`
+
+> The ID of the entity to be updated.
+
+**newState** `{Object}`
+
+> Attributes to be updated in the entity's state.
+
+**Returns** `{Object}`
+
+> The normalized object. For example, following on from the example above of `normalizeIds`, calling `updateEntity(state, 2, { isLoading: true })` would return:
+
+    {
+      1: { isLoading: false, _order: 2 },
+      2: { isLoading: true, _order: 1 }
+    }
