@@ -230,7 +230,7 @@ console.log(JSON.stringify(posts, null, 2));
 
 > An optional object to initalize state for each entity.
 
-**initalIndex** `{Schema}`
+**initalIndex** `{Integer}`
 
 > The inital index to count from. Useful when appending results.
 
